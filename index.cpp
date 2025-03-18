@@ -18,6 +18,8 @@ int viewTransaksi();
 int transaksi();
 int viewStock();
 int updateStock();
+int updateHarga();
+int deleteStock();
 int stockTracking();
 int menuKasir();
 int menuStockKeeper();
@@ -49,23 +51,20 @@ int viewStock()
 int updateStock()
 {
     system("cls");
-    string kodeProdukCari;
-    char pilih;
-    time_t timestamp;
-    time(&timestamp);
-    cout << ctime(&timestamp);
-    cout << "----------------------UPDATE Barang------------------" << endl;
-    cout << "1. Update Stock" << endl;
-    cout << "2. Update Harga" << endl;
-    cout << "3. Delete Produk" << endl;
-    cout << "4. Exit" << endl;
-    cout << "-----------------------------------------------------" << endl;
-    cout << "Pilih : ";
-    cin >> pilih;
-    cout << "Masukkan kode produk : ";
-    cin >> kodeProdukCari;
-    
+    cout << "belum ada";
 
+    return 0;
+}
+int updateHarga()
+{
+    system("cls");
+    cout << "belum ada";
+    return 0;
+}
+int deleteStock()
+{
+    system("cls");
+    cout << "belum ada";
     return 0;
 }
 int stockTracking()
@@ -117,9 +116,11 @@ int menuStockKeeper()
         system("cls");
         kembali = 'n';
         cout << "-----------------------MENU ADMIN--------------------" << endl;
-        cout << "1. Update Barang" << endl;
-        cout << "2. Lihat Stock Terkini" << endl;
-        cout << "3. Exit" << endl;
+        cout << "1. Update Stock" << endl;
+        cout << "2. Update Harga" << endl;
+        cout << "3. Delete Produk" << endl;
+        cout << "4. Lihat Stock Terkini" << endl;
+        cout << "5. Exit" << endl;
         cout << "-----------------------------------------------------" << endl;
         cout << "Pilih : ";
         cin >> pilih;
@@ -129,15 +130,21 @@ int menuStockKeeper()
             updateStock();
             break;
         case '2':
-            viewStock();
+            updateHarga();
             break;
         case '3':
+            deleteStock();
+            break;
+        case '4':
+            viewStock();
+            break;
+        case '5':
             menuAdmin('y');
             break;
         default:
             cout << "Pilihan tidak ada.";
             cout << endl;
-            cout << "Kembali ke MENU [y/n] : ";
+            cout << "Kembali ke MENU AWAL [y/n] : ";
             cin >> kembali;
             break;
         }
@@ -180,4 +187,3 @@ int menuAdmin(char back)
     } while (kembali == 'y' || back == 'y');
     return 0;
 }
-
