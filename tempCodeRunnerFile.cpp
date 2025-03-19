@@ -1,0 +1,2 @@
+);
+    string waktu = ctime(&timestamp);
