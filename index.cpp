@@ -83,14 +83,93 @@ int viewStock()
 int updateStock()
 {
     system("cls");
-    cout << "belum ada";
-
+    FILE *file = fopen("dataProduk.dat", "r+b");
+    if (file == NULL)
+    {
+        printf("File dataProduk.dat tidak ditemukan.\n");
+        return 1;
+    }
+    data produk;
+    char kodeProduk[15];
+    cout << "Update Stock Barang" << endl;
+    cout << "Masukkan kode produk : ";
+    cin >> kodeProduk;
+    while (fread(&produk, sizeof(data), 1, file) == 1)
+    {
+        if (strcmp(produk.kodeProduk, kodeProduk) == 0)
+        {
+            int tambahStock;
+            cout << "Kode Produk : " << kodeProduk << endl;
+            cout << "Nama Produk : " << produk.namaProduk << endl;
+            cout << "Kategori Produk : " << produk.kategoriProduk << endl;
+            cout << "Stock : " << produk.stock << endl;
+            cout << "Masukkan jumlah stock : ";
+            cin >> tambahStock;
+            produk.stock += tambahStock;
+            time_t timestamp;
+            time(&timestamp);
+            strcpy(produk.tanggal, ctime(&timestamp));
+            fseek(file, -sizeof(data), SEEK_CUR);
+            fwrite(&produk, sizeof(data), 1, file);
+            cout << endl ;
+            cout << "Produk berhasil diupdate." << endl;
+            cout << "Stock barang sebelum diupdate : " << produk.stock << endl;
+            fclose(file);
+            return 0;
+        }
+        else
+        {
+            cout << "Produk tidak ditemukan." << endl;
+            fclose(file);
+            return 1;
+        }
+    }
     return 0;
 }
 int updateHarga()
 {
     system("cls");
-    cout << "belum ada";
+    FILE *file = fopen("dataProduk.dat", "r+b");
+    if (file == NULL)
+    {
+        printf("File dataProduk.dat tidak ditemukan.\n");
+        return 1;
+    }
+    data produk;
+    char kodeProduk[15];
+    cout << "Update Harga Barang" << endl;
+    cout << "Masukkan kode produk : ";
+    cin >> kodeProduk;
+    while (fread(&produk, sizeof(data), 1, file) == 1)
+    {
+        if (strcmp(produk.kodeProduk, kodeProduk) == 0)
+        {
+            int hargaBaru;
+            cout << "Kode Produk : " << kodeProduk << endl;
+            cout << "Nama Produk : " << produk.namaProduk << endl;
+            cout << "Kategori Produk : " << produk.kategoriProduk << endl;
+            cout << "Harga/Stock : " << produk.hargaPerStock << endl;
+            cout << "Masukkan harga baru : ";
+            cin >> hargaBaru;
+            produk.hargaPerStock = hargaBaru;
+            time_t timestamp;
+            time(&timestamp);
+            strcpy(produk.tanggal, ctime(&timestamp));
+            fseek(file, -sizeof(data), SEEK_CUR);
+            fwrite(&produk, sizeof(data), 1, file);
+            cout << endl ;
+            cout << "Produk berhasil diupdate." << endl;
+            cout << "Harga barang sebelum diupdate : " << produk.hargaPerStock << endl;
+            fclose(file);
+            return 0;
+        }
+        else
+        {
+            cout << "Produk tidak ditemukan." << endl;
+            fclose(file);
+            return 1;
+        }
+    }
     return 0;
 }
 int insertProduk()
