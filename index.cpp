@@ -96,7 +96,7 @@ int updateStock()
     cin >> kodeProduk;
     while (fread(&produk, sizeof(data), 1, file) == 1)
     {
-        if (strcmp(produk.kodeProduk, kodeProduk) == 0)
+        if (strcmp(produk.kodeProduk, kodeProduk) == 1)
         {
             int tambahStock;
             cout << "Kode Produk : " << kodeProduk << endl;
