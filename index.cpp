@@ -4,6 +4,7 @@
 #include <string.h>
 #include <iomanip>
 using namespace std;
+
 struct data
 {
     char tanggal[40];
@@ -12,37 +13,25 @@ struct data
     char kategoriProduk[20];
     int stock;
     int hargaPerStock;
-    char input[10];
-    char output[10];
+    data *next;
+    data *prev;
+    
 };
-data produk;
-int viewTransaksi();
-int transaksi();
+
+
+data *head = NULL;
+data *tail = NULL;
+
 int viewStock();
 int updateStock();
 int updateHarga();
 int insertProduk();
 int deleteStock();
-int stockTracking();
-int menuKasir();
 int menuStockKeeper();
-int menuAdmin(char back);
 
 int main()
 {
-    menuAdmin('n');
-    return 0;
-}
-int viewTransaksi()
-{
-    system("cls");
-    cout << "belum";
-    return 0;
-}
-int transaksi()
-{
-    system("cls");
-    cout << "belum";
+    menuStockKeeper();
     return 0;
 }
 int viewStock()
@@ -54,28 +43,28 @@ int viewStock()
         printf("File dataProduk.dat tidak ditemukan.\n");
         return 1;
     }
-    data produk;
     cout << "                                                                             DAFTAR PRODUK TERKINI                                                                              " << endl;
-    cout << "--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------" << endl; 
+    cout << "--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------" << endl;
     cout << setw(20) << setiosflags(ios::left) << "Kode Produk" << setw(3) << setiosflags(ios::left) << "|";
-    cout << setw(30) << setiosflags(ios::left) << "Nama Produk" << setw(3) << setiosflags(ios::left) << "|";
-    cout << setw(30) << setiosflags(ios::left) << "Kategori Produk" << setw(3) << setiosflags(ios::left) << "|";
+    cout << setw(20) << setiosflags(ios::left) << "Nama Produk" << setw(3) << setiosflags(ios::left) << "|";
+    cout << setw(20) << setiosflags(ios::left) << "Kategori Produk" << setw(3) << setiosflags(ios::left) << "|";
     cout << setw(7) << setiosflags(ios::left) << "Stock" << setw(3) << setiosflags(ios::left) << "|";
     cout << setw(15) << setiosflags(ios::left) << "Harga/Stock" << setw(3) << setiosflags(ios::left) << "|";
     cout << setw(10) << setiosflags(ios::left) << "Input" << setw(3) << setiosflags(ios::left) << "|";
     cout << setw(10) << setiosflags(ios::left) << "Output" << setw(3) << setiosflags(ios::left) << "|";
     cout << setw(40) << setiosflags(ios::left) << "Tanggal" << endl;
-    cout << "--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------" << endl; 
-    while (fread(&produk, sizeof(data), 1, file) == 1)
+    cout << "--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------" << endl;
+    
+    data* current = head;
+    while (current != NULL)
     {
-        cout << setw(20) << setiosflags(ios::left) << produk.kodeProduk << setw(3) << setiosflags(ios::left) << "|";
-        cout << setw(30) << setiosflags(ios::left) << produk.namaProduk << setw(3) << setiosflags(ios::left) << "|";
-        cout << setw(30) << setiosflags(ios::left) << produk.kategoriProduk << setw(3) << setiosflags(ios::left) << "|";
-        cout << setw(7) << setiosflags(ios::left) << produk.stock << setw(3) << setiosflags(ios::left) << "|";
-        cout << setw(15) << setiosflags(ios::left) << produk.hargaPerStock << setw(3) << setiosflags(ios::left) << "|";
-        cout << setw(10) << setiosflags(ios::left) << produk.input << setw(3) << setiosflags(ios::left) << "|";
-        cout << setw(10) << setiosflags(ios::left) << produk.output << setw(3) << setiosflags(ios::left) << "|";
-        cout << setw(40) << setiosflags(ios::left) << produk.tanggal << endl;
+        cout << setw(20) << setiosflags(ios::left) << current->kodeProduk << setw(3) << setiosflags(ios::left) << "|";
+        cout << setw(20) << setiosflags(ios::left) << current->namaProduk << setw(3) << setiosflags(ios::left) << "|";
+        cout << setw(20) << setiosflags(ios::left) << current->kategoriProduk << setw(3) << setiosflags(ios::left) << "|";
+        cout << setw(7) << setiosflags(ios::left) << current->stock << setw(3) << setiosflags(ios::left) << "|";
+        cout << setw(15) << setiosflags(ios::left) << current->hargaPerStock << setw(3) << setiosflags(ios::left) << "|";
+        cout << setw(40) << setiosflags(ios::left) << current->tanggal << endl;
+        current = current->next;
     }
     fclose(file);
     return 0;
@@ -89,31 +78,31 @@ int updateStock()
         printf("File dataProduk.dat tidak ditemukan.\n");
         return 1;
     }
-    data produk;
     char kodeProduk[15];
     cout << "Update Stock Barang" << endl;
     cout << "Masukkan kode produk : ";
     cin >> kodeProduk;
-    while (fread(&produk, sizeof(data), 1, file) == 1)
+    data* current = head;
+    while (current != NULL)
     {
-        if (strcmp(produk.kodeProduk, kodeProduk) == 1)
+        if (strcmp(current->kodeProduk, kodeProduk) == 1)
         {
             int tambahStock;
-            cout << "Kode Produk : " << kodeProduk << endl;
-            cout << "Nama Produk : " << produk.namaProduk << endl;
-            cout << "Kategori Produk : " << produk.kategoriProduk << endl;
-            cout << "Stock : " << produk.stock << endl;
+            cout << "Kode Produk : " << current->kodeProduk << endl;
+            cout << "Nama Produk : " << current->namaProduk << endl;
+            cout << "Kategori Produk : " << current->kategoriProduk << endl;
+            cout << "Stock : " << current->stock << endl;
             cout << "Masukkan jumlah stock : ";
             cin >> tambahStock;
-            produk.stock += tambahStock;
+            current->stock += tambahStock;
             time_t timestamp;
             time(&timestamp);
-            strcpy(produk.tanggal, ctime(&timestamp));
+            strcpy(current->tanggal, ctime(&timestamp));
             fseek(file, -sizeof(data), SEEK_CUR);
-            fwrite(&produk, sizeof(data), 1, file);
-            cout << endl ;
+            fwrite(current, sizeof(data), 1, file);
+            cout << endl;
             cout << "Produk berhasil diupdate." << endl;
-            cout << "Stock barang sebelum diupdate : " << produk.stock << endl;
+            cout << "Stock barang sebelum diupdate : " << current->stock << endl;
             fclose(file);
             return 0;
         }
@@ -123,43 +112,45 @@ int updateStock()
             fclose(file);
             return 1;
         }
+        current = current->next;
     }
     return 0;
 }
 int updateHarga()
 {
     system("cls");
+    data* current = head;
     FILE *file = fopen("dataProduk.dat", "r+b");
     if (file == NULL)
     {
         printf("File dataProduk.dat tidak ditemukan.\n");
         return 1;
     }
-    data produk;
+
     char kodeProduk[15];
     cout << "Update Harga Barang" << endl;
     cout << "Masukkan kode produk : ";
     cin >> kodeProduk;
-    while (fread(&produk, sizeof(data), 1, file) == 1)
+    while (current != NULL) 
     {
-        if (strcmp(produk.kodeProduk, kodeProduk) == 0)
+        if (strcmp(current->kodeProduk, kodeProduk) == 1)
         {
-            int hargaBaru;
-            cout << "Kode Produk : " << kodeProduk << endl;
-            cout << "Nama Produk : " << produk.namaProduk << endl;
-            cout << "Kategori Produk : " << produk.kategoriProduk << endl;
-            cout << "Harga/Stock : " << produk.hargaPerStock << endl;
+            int hargaPerStock;
+            cout << "Kode Produk : " << current->kodeProduk << endl;
+            cout << "Nama Produk : " << current->namaProduk << endl;
+            cout << "Kategori Produk : " << current->kategoriProduk << endl;
+            cout << "Harga/Stock : " << current->hargaPerStock << endl;
             cout << "Masukkan harga baru : ";
-            cin >> hargaBaru;
-            produk.hargaPerStock = hargaBaru;
+            cin >> hargaPerStock;
+            current->hargaPerStock = hargaPerStock;
             time_t timestamp;
             time(&timestamp);
-            strcpy(produk.tanggal, ctime(&timestamp));
+            strcpy(current->tanggal, ctime(&timestamp));
             fseek(file, -sizeof(data), SEEK_CUR);
-            fwrite(&produk, sizeof(data), 1, file);
-            cout << endl ;
+            fwrite(current, sizeof(data), 1, file);
+            cout << endl;
             cout << "Produk berhasil diupdate." << endl;
-            cout << "Harga barang sebelum diupdate : " << produk.hargaPerStock << endl;
+            cout << "Harga barang sebelum diupdate : " << current->hargaPerStock << endl;
             fclose(file);
             return 0;
         }
@@ -169,92 +160,138 @@ int updateHarga()
             fclose(file);
             return 1;
         }
+        current = current->next;
+    }
+    {
+        if (strcmp(current->kodeProduk, kodeProduk) == 1)
+        {
+            int hargaBaru;
+            cout << "Kode Produk : " << current->kodeProduk << endl;
+            cout << "Nama Produk : " << current->namaProduk << endl;
+            cout << "Kategori Produk : " << current->kategoriProduk << endl;
+            cout << "Harga/Stock : " << current->hargaPerStock << endl;
+            cout << "Masukkan harga baru : ";
+            cin >> hargaBaru;
+            current->hargaPerStock = hargaBaru;
+            time_t timestamp;
+            time(&timestamp);
+            strcpy(current->tanggal, ctime(&timestamp));
+            fseek(file, -sizeof(data), SEEK_CUR);
+            fwrite(&current, sizeof(data), 1, file);
+            cout << endl;
+            cout << "Produk berhasil diupdate." << endl;
+            cout << "Harga barang sebelum diupdate : " << current->hargaPerStock << endl;
+            fclose(file);
+            return 0;
+        }
+        else
+        {
+            cout << "Produk tidak ditemukan." << endl;
+            fclose(file);
+            return 1;
+        }
+        current = current->next;
     }
     return 0;
 }
 int insertProduk()
 {
     system("cls");
+    char cari[15];
+    data* newNode = new data;
     FILE *file = fopen("dataProduk.dat", "ab");
+    FILE *file2 = fopen("dataProduk.dat", "rb");
     if (file == NULL)
     {
-        printf("File dataProduk.dat tidak dapat dibuat.\n");
+        printf("File dataProduk.dat tidak ditemukan.\n");
         return 1;
     }
-    data produk;
-    printf("File dataProduk.dat berhasil dibuat.\n");
+    if (file2 == NULL)
+    {
+        printf("File dataProduk.dat tidak ditemukan.\n");
+        fclose(file);
+        return 1;
+    }
+    data* current = head;
     printf("Masukkan data produk.\n");
     printf("Kode Produk : ");
-    cin >> produk.kodeProduk;
+    cin >> cari;
+    while(current != NULL)
+    {
+        if (strcmp(current->kodeProduk, cari) == 0)
+        {
+            cout << "Kode Produk sudah ada." << endl;
+            cout << "Silahkan masukkan kode produk yang lain." << endl;
+            fclose(file2);
+            fclose(file);
+
+            return 1;
+        }
+        current = current->next;
+    }
     printf("Nama Produk : ");
     cin.ignore();
-    cin.getline(produk.namaProduk, sizeof(produk.namaProduk));
+    cin.getline(current->namaProduk, sizeof(current));
     printf("Kategori Produk : ");
-    scanf("%s", produk.kategoriProduk);
+    cin.ignore();
+    scanf("%s", current->kategoriProduk);
     printf("Stock : ");
-    scanf("%d", &produk.stock);
+    scanf("%d", &current->stock);
     printf("Harga/Stock : ");
-    scanf("%d", &produk.hargaPerStock);
-    strcpy(produk.input, "ya");
-    strcpy(produk.output, "tidak");
+    scanf("%d", &current->hargaPerStock);
     time_t timestamp;
     time(&timestamp);
-    strcpy(produk.tanggal, ctime(&timestamp));
-    fwrite(&produk, sizeof(data), 1, file);
+    strcpy(current->tanggal, ctime(&timestamp));
+    
+    fwrite(&current, sizeof(data), 1, file);
     fclose(file);
     return 0;
 }
 int deleteStock()
 {
     system("cls");
-    cout << "belum ada";
-    return 0;
-}
-int stockTracking()
-{
-    system("cls");
-    cout << "belum ada";
-    return 0;
-}
-int menuKasir()
-{
-    char pilih, kembali;
-    do
+    FILE *file = fopen("dataProduk.dat", "r+b");
+    FILE *tempFile = fopen("temp.dat", "wb");
+    if (!file)
     {
-        system("cls");
-        kembali = 'n';
-        cout << "-----------------------MENU KASIR--------------------" << endl;
-        cout << "1. Transaksi" << endl;
-        cout << "2. Lihat Transaksi" << endl;
-        cout << "3. Exit" << endl;
-        cout << "-----------------------------------------------------" << endl;
-        cout << "Pilih : ";
-        cin >> pilih;
-        switch (pilih)
+        cout << "Produk tidak ditemukan" << endl;
+        return 1;
+    }
+data* current = head;
+    char kodeProduk[15];
+    bool found = false;
+
+    cout << "Masukkan kode produk :";
+    cin >> kodeProduk;
+
+    while (current != NULL)
+    {
+        if (strcmp(current->kodeProduk, kodeProduk) == 0)
         {
-        case '1':
-            transaksi();
-            printf("\n");
-            printf("Kembali ke MENU [y/n] : ");
-            cin >> kembali;
-            break;
-        case '2':
-            viewTransaksi();
-            printf("\n");
-            printf("Kembali ke MENU [y/n] : ");
-            cin >> kembali;
-            break;
-        case '3':
-            menuAdmin('y');
-            break;
-        default:
-            printf("Pilihan tidak ada.");
-            printf("\n");
-            printf("Kembali ke MENU [y/n] : ");
-            cin >> kembali;
-            break;
+            found = true;
+            cout << "Produk berhasil dihapus!" << endl;
+            
         }
-    } while (kembali == 'y');
+        else
+        {
+            fwrite(&current, sizeof(data), 1, tempFile);
+        }
+        current = current->next;
+    }
+
+    fclose(file);
+    fclose(tempFile);
+
+    if (found)
+    {
+        remove("dataProduk.dat");
+        rename("temp.dat", "dataProduk.dat");
+    }
+    else
+    {
+        remove("temp.dat");
+        cout << "Produk tidak ditemukan." << endl;
+    }
     return 0;
 }
 int menuStockKeeper()
@@ -307,7 +344,7 @@ int menuStockKeeper()
             cin >> kembali;
             break;
         case '6':
-            menuAdmin('y');
+            printf("Terima kasih telah menggunakan program ini.\n");
             break;
         default:
             printf("Pilihan tidak ada.");
@@ -319,39 +356,4 @@ int menuStockKeeper()
     } while (kembali == 'y');
     return 0;
 }
-int menuAdmin(char back)
-{
-    char pilih, kembali;
-    do
-    {
-        system("cls");
-        kembali = 'n';
-        back = 'n';
-        cout << "--------------------MANAJEMEN STOCK------------------" << endl;
-        cout << "1. Manajemen Barang" << endl;
-        cout << "2. Manajemen Kasir" << endl;
-        cout << "3. Stock Tracking" << endl;
-        cout << "-----------------------------------------------------" << endl;
-        cout << "Pilih : ";
-        cin >> pilih;
-        switch (pilih)
-        {
-        case '1':
-            menuStockKeeper();
-            break;
-        case '2':
-            menuKasir();
-            break;
-        case '3':
-            stockTracking();
-            break;
-        default:
-            cout << "Pilihan tidak ada.";
-            cout << endl;
-            cout << "Kembali ke MENU [y/n] : ";
-            cin >> kembali;
-            break;
-        }
-    } while (kembali == 'y' || back == 'y');
-    return 0;
-}
+
