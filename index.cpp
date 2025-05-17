@@ -61,7 +61,7 @@ void insertNodeBack(char *tanggal, char *kodeProduk, char *namaProduk, char *kat
     else
     {
         newNode->prev = tail;
-        tail->prev = newNode;
+        tail->next = newNode;
         tail = newNode;
     }
 }
@@ -84,8 +84,8 @@ void insertNodeMiddle(char *tanggal, char *kodeProduk, char *namaProduk, char *k
     help->next = newNode;
 }
 void insertionSort();
-void loadListFromFile();
-void saveListToFile();
+void loadListFromFile(Node **head, Node **tail);
+void saveListToFile(Node *head);
 void resetList();
 int viewStock(char methodUrut);
 int updateStock();
@@ -95,6 +95,7 @@ int deleteStock();
 
 int main()
 {
+    loadListFromFile(&head, &tail);
     char pilih, kembali;
     do
     {
@@ -166,14 +167,7 @@ void insertionSort()
     {
         cout << x[i] << " ";
     }
-    Node *temp;
-    Node *current = head;
-    while (current != NULL)
-    {
-        x[i] = current->stock;
-        current = current->next;
-    }
-    for (i = 1; i < n; i++)
+     for (i = 1; i < n; i++)
     {
         temp = x[i];
         j = i - 1;
@@ -192,13 +186,14 @@ void insertionSort()
     cout << "\n\n";
     system("pause");
 }
+
 int viewStock(char methodUrut)
 {
     system("cls");
     if (head == nullptr)
     {
         cout << "List kosong." << endl;
-        return;
+        return 0;
     }
     cout << "                                                                             DAFTAR PRODUK TERKINI                                                                              " << endl;
     cout << "--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------" << endl;
@@ -211,7 +206,7 @@ int viewStock(char methodUrut)
     cout << setw(10) << setiosflags(ios::left) << "Output" << setw(3) << setiosflags(ios::left) << "|";
     cout << setw(40) << setiosflags(ios::left) << "Tanggal" << endl;
     cout << "--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------" << endl;
-    if (methodUrut = 'A')
+    if (methodUrut == 'A')
     {
         Node *current = head;
         while (current != nullptr)
@@ -225,7 +220,7 @@ int viewStock(char methodUrut)
             current = current->next;
         }
     }
-    else if (methodUrut = 'B')
+    else if (methodUrut == 'B')
     {
         Node *current = tail;
         while (current != nullptr)
@@ -245,28 +240,39 @@ int viewStock(char methodUrut)
     }
     return 0;
 }
-void loadListFromFile()
+void loadListFromFile(Node **head, Node **tail)
 {
     FILE *file = fopen("dataProduk.dat", "rb");
     if (!file)
     {
-        cout << "File dataProduk.dat tidak ditemukan. Membuat file baru..." << endl;
+        cout << "File dataProduk.dat tidak ditemukan! Buat file baru!" << endl;
         return;
     }
 
     Node temp;
     while (fread(&temp, sizeof(Node), 1, file))
     {
-        insertNodeBack(temp.tanggal, temp.kodeProduk, temp.namaProduk, temp.kategoriProduk, temp.stock, temp.hargaPerStock);
+        Node *newNode = new Node;
+        *newNode = temp;
+        newNode->next = nullptr;
+        newNode->prev = nullptr;
+        if (*head == nullptr) {
+            *head = newNode;
+            *tail = newNode;
+        } else {
+            newNode->prev = *tail;
+            (*tail)->next = newNode;
+            *tail = newNode;
+        }
     }
     fclose(file);
 }
-void saveListToFile()
+void saveListToFile(Node *head)
 {
     FILE *file = fopen("dataProduk.dat", "wb");
     if (!file)
     {
-        cout << "Gagal membuka file untuk menyimpan data." << endl;
+        cout << "Gagal membuka file untuk menyimpan data!" << endl;
         return;
     }
 
@@ -295,7 +301,7 @@ void resetList()
     head = nullptr;
     tail = nullptr;
 
-    cout << "Linked list telah direset." << endl;
+    cout << "Linked list telah direset!" << endl;
 }
 int updateStock()
 {
@@ -303,7 +309,7 @@ int updateStock()
     FILE *file = fopen("dataProduk.dat", "r+b");
     if (file == NULL)
     {
-        printf("File dataProduk.dat tidak ditemukan.\n");
+        printf("File dataProduk.dat tidak ditemukan!\n");
         return 1;
     }
     char kodeProduk[15];
@@ -313,7 +319,7 @@ int updateStock()
     Node *current = head;
     while (current != NULL)
     {
-        if (strcmp(current->kodeProduk, kodeProduk) == 1)
+        if (strcmp(current->kodeProduk, kodeProduk) == 0)
         {
             int tambahStock;
             cout << "Kode Produk : " << current->kodeProduk << endl;
@@ -326,32 +332,29 @@ int updateStock()
             time_t timestamp;
             time(&timestamp);
             strcpy(current->tanggal, ctime(&timestamp));
-            fseek(file, -sizeof(data), SEEK_CUR);
-            fwrite(current, sizeof(data), 1, file);
+            fseek(file, -sizeof(Node), SEEK_CUR);
+            fwrite(current, sizeof(Node), 1, file);
             cout << endl;
             cout << "Produk berhasil diupdate." << endl;
             cout << "Stock barang sebelum diupdate : " << current->stock << endl;
             fclose(file);
             return 0;
         }
-        else
-        {
-            cout << "Produk tidak ditemukan." << endl;
-            fclose(file);
-            return 1;
-        }
         current = current->next;
     }
-    return 0;
+    // Jika tidak ditemukan
+    cout << "Produk tidak ditemukan!" << endl;
+    fclose(file);
+    return 1;
 }
 int updateHarga()
 {
     system("cls");
-    N *current = head;
+    Node *current = head;
     FILE *file = fopen("dataProduk.dat", "r+b");
     if (file == NULL)
     {
-        printf("File dataProduk.dat tidak ditemukan.\n");
+        printf("File dataProduk.dat tidak ditemukan!\n");
         return 1;
     }
 
@@ -359,9 +362,10 @@ int updateHarga()
     cout << "Update Harga Barang" << endl;
     cout << "Masukkan kode produk : ";
     cin >> kodeProduk;
+
     while (current != NULL)
     {
-        if (strcmp(current->kodeProduk, kodeProduk) == 1)
+        if (strcmp(current->kodeProduk, kodeProduk) == 0)
         {
             int hargaPerStock;
             cout << "Kode Produk : " << current->kodeProduk << endl;
@@ -374,53 +378,20 @@ int updateHarga()
             time_t timestamp;
             time(&timestamp);
             strcpy(current->tanggal, ctime(&timestamp));
-            fseek(file, -sizeof(data), SEEK_CUR);
-            fwrite(current, sizeof(data), 1, file);
+            fseek(file, -sizeof(Node), SEEK_CUR);
+            fwrite(current, sizeof(Node), 1, file);
             cout << endl;
-            cout << "Produk berhasil diupdate." << endl;
-            cout << "Harga barang sebelum diupdate : " << current->hargaPerStock << endl;
+            cout << "Produk berhasil diupdate" << endl;
+            cout << "Harga barang setelah diupdate : " << current->hargaPerStock << endl;
             fclose(file);
             return 0;
         }
-        else
-        {
-            cout << "Produk tidak ditemukan." << endl;
-            fclose(file);
-            return 1;
-        }
         current = current->next;
     }
-    {
-        if (strcmp(current->kodeProduk, kodeProduk) == 1)
-        {
-            int hargaBaru;
-            cout << "Kode Produk : " << current->kodeProduk << endl;
-            cout << "Nama Produk : " << current->namaProduk << endl;
-            cout << "Kategori Produk : " << current->kategoriProduk << endl;
-            cout << "Harga/Stock : " << current->hargaPerStock << endl;
-            cout << "Masukkan harga baru : ";
-            cin >> hargaBaru;
-            current->hargaPerStock = hargaBaru;
-            time_t timestamp;
-            time(&timestamp);
-            strcpy(current->tanggal, ctime(&timestamp));
-            fseek(file, -sizeof(data), SEEK_CUR);
-            fwrite(&current, sizeof(data), 1, file);
-            cout << endl;
-            cout << "Produk berhasil diupdate." << endl;
-            cout << "Harga barang sebelum diupdate : " << current->hargaPerStock << endl;
-            fclose(file);
-            return 0;
-        }
-        else
-        {
-            cout << "Produk tidak ditemukan." << endl;
-            fclose(file);
-            return 1;
-        }
-        current = current->next;
-    }
-    return 0;
+    // Jika tidak ditemukan
+    cout << "Produk tidak ditemukan!" << endl;
+    fclose(file);
+    return 1;
 }
 int insertProduk()
 {
@@ -428,82 +399,90 @@ int insertProduk()
     char cari[15];
     Node *newNode = new Node;
     FILE *file = fopen("dataProduk.dat", "ab");
-    FILE *file2 = fopen("dataProduk.dat", "rb");
     if (file == NULL)
     {
-        printf("File dataProduk.dat tidak ditemukan.\n");
-        return 1;
-    }
-    if (file2 == NULL)
-    {
-        printf("File dataProduk.dat tidak ditemukan.\n");
-        fclose(file);
+        printf("File dataProduk.dat tidak ditemukan\n");
         return 1;
     }
     Node *current = head;
-    printf("Masukkan data produk.\n");
+    printf("Masukkan data produk\n");
     printf("Kode Produk : ");
     cin >> cari;
     while (current != NULL)
     {
         if (strcmp(current->kodeProduk, cari) == 0)
         {
-            cout << "Kode Produk sudah ada." << endl;
-            cout << "Silahkan masukkan kode produk yang lain." << endl;
-            fclose(file2);
+            cout << "Kode Produk sudah ada" << endl;
+            cout << "Masukkan kode produk yang lain!" << endl;
+            cout << "Kode Produk     : " << current->kodeProduk << endl ;
+            cout << "Nama Produk     : " << current->namaProduk << endl ;
+            cout << "Kategori Produk : " << current->kategoriProduk << endl ;
+            cout << "Harga/stock     : " << current->hargaPerStock << endl ;
+            cout << "Stock           : " << current->stock << endl;
+            cout << "Diperbarui      : " << current->tanggal << endl ;
             fclose(file);
-
             return 1;
         }
         current = current->next;
     }
+    strcpy(newNode->kodeProduk, cari);
     printf("Nama Produk : ");
     cin.ignore();
-    cin.getline(current->namaProduk, sizeof(current));
+    cin.getline(newNode->namaProduk, sizeof(newNode->namaProduk));
     printf("Kategori Produk : ");
-    cin.ignore();
-    scanf("%s", current->kategoriProduk);
+    cin.getline(newNode->kategoriProduk, sizeof(newNode->kategoriProduk));
     printf("Stock : ");
-    scanf("%d", &current->stock);
+    cin >> newNode->stock;
     printf("Harga/Stock : ");
-    scanf("%d", &current->hargaPerStock);
+    cin >> newNode->hargaPerStock;
     time_t timestamp;
     time(&timestamp);
-    strcpy(current->tanggal, ctime(&timestamp));
+    strcpy(newNode->tanggal, ctime(&timestamp));
 
-    fwrite(&current, sizeof(Node), 1, file);
+    fwrite(newNode, sizeof(Node), 1, file);
     fclose(file);
+    insertNodeBack(newNode->tanggal, newNode->kodeProduk, newNode->namaProduk, newNode->kategoriProduk, newNode->stock, newNode->hargaPerStock);
     return 0;
 }
 int deleteStock()
 {
     system("cls");
-    FILE *file = fopen("dataProduk.dat", "r+b");
+    FILE *file = fopen("dataProduk.dat", "rb");
     FILE *tempFile = fopen("temp.dat", "wb");
     if (!file)
     {
-        cout << "Produk tidak ditemukan" << endl;
+        cout << "Produk tidak ditemukan!" << endl;
         return 1;
     }
-    data *current = head;
+    Node *current = head;
     char kodeProduk[15];
     bool found = false;
 
     cout << "Masukkan kode produk :";
     cin >> kodeProduk;
 
-    while (current != NULL)
+    // Hapus dari linked list
+    Node *prev = nullptr;
+    current = head;
+    while (current != nullptr)
     {
         if (strcmp(current->kodeProduk, kodeProduk) == 0)
         {
             found = true;
+            if (current == head) head = current->next;
+            if (current == tail) tail = current->prev;
+            if (current->prev) current->prev->next = current->next;
+            if (current->next) current->next->prev = current->prev;
+            Node *toDelete = current;
+            current = current->next;
+            delete toDelete;
             cout << "Produk berhasil dihapus!" << endl;
         }
         else
         {
-            fwrite(&current, sizeof(Node), 1, tempFile);
+            fwrite(current, sizeof(Node), 1, tempFile);
+            current = current->next;
         }
-        current = current->next;
     }
 
     fclose(file);
@@ -517,7 +496,7 @@ int deleteStock()
     else
     {
         remove("temp.dat");
-        cout << "Produk tidak ditemukan." << endl;
+        cout << "Produk tidak ditemukan!" << endl;
     }
     return 0;
 }
