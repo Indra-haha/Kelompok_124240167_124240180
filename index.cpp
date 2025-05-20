@@ -115,7 +115,7 @@ int main()
     {
         system("cls");
         kembali = 'n';
-        printf("-------------------MANAJEMEN STOCK-------------------\n");
+        printf("-------------------MANAJEMEN STOCK--------------------\n");
         printf("1. Update Stock\n");
         printf("2. Update Harga\n");
         printf("3. Insert Produk\n");
