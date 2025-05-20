@@ -83,7 +83,7 @@ void insertNodeMiddle(char *tanggal, char *kodeProduk, char *namaProduk, char *k
 
     help->next = newNode;
 }
-void insertionSort();
+void insertionSort(char pilihan);
 void loadListFromFile(Node **head, Node **tail);
 void saveListToFile(Node *head);
 void resetList();
@@ -97,6 +97,20 @@ int main()
 {
     loadListFromFile(&head, &tail);
     char pilih, kembali;
+    if (head == NULL)
+    {
+        system("cls");
+        printf("Upss... List Kamu Kosong\n");
+        printf("Isi Dulu List Kamu\n");
+        system("pause");
+        insertProduk();
+        printf("\n");
+        printf("Berhasil!!!");
+    }
+    else
+    {
+        cout << "Yeah....List Kamu Terisi" << endl;
+    }
     do
     {
         system("cls");
@@ -138,6 +152,13 @@ int main()
             cin >> kembali;
             break;
         case '5':
+            printf("Lihat Stock Terkini\n");
+            printf("1. Urutkan berdasarkan harga\n");
+            printf("2. Urutkan berdasarkan stock\n");
+            printf("Pilih : ");
+            char pilihanUrut;
+            cin >> pilihanUrut;
+            insertionSort(pilihanUrut);
             printf("Sort by Ascending [A] or Descending [B] : ");
             char methodUrut;
             cin >> methodUrut;
@@ -145,6 +166,7 @@ int main()
             printf("\n");
             printf("Kembali ke MENU [y/n] : ");
             cin >> kembali;
+
             break;
         case '6':
             printf("Terima kasih telah menggunakan program ini.\n");
@@ -159,34 +181,115 @@ int main()
     } while (kembali == 'y');
     return 0;
 }
-void insertionSort()
+void insertionSort(char pilihan)
 {
-    int i, j, n = 6, temp, x[6] = {7, 23, 4, 29, 11, 9};
-    cout << "Data Sebelum diurutkan:\n";
-    for (i = 0; i < n; i++)
-    {
-        cout << x[i] << " ";
-    }
-     for (i = 1; i < n; i++)
-    {
-        temp = x[i];
-        j = i - 1;
-        while (j >= 0 && x[j] > temp)
-        {
-            x[j + 1] = x[j];
-            j = j - 1;
-        }
-        x[j + 1] = temp;
-    }
-    cout << "\n\nData Setelah diurutkan:\n";
-    for (i = 0; i < n; i++)
-    {
-        cout << x[i] << " ";
-    }
-    cout << "\n\n";
-    system("pause");
-}
+    if (head == nullptr || head->next == nullptr)
+        return;
 
+    Node *current = head->next;
+    if (pilihan == '1')
+    {
+        while (current != nullptr)
+        {
+            Node *temp = current;
+            Node *prev = current->prev;
+
+            while (prev != nullptr && temp->hargaPerStock < prev->hargaPerStock)
+            {
+                prev = prev->prev;
+            }
+
+            if (prev != current->prev)
+            {
+                temp->prev->next = temp->next;
+                if (temp->next != nullptr)
+                {
+                    temp->next->prev = temp->prev;
+                }
+
+                if (prev == nullptr)
+                {
+                    temp->next = head;
+                    head->prev = temp;
+                    head = temp;
+                    temp->prev = nullptr;
+                }
+                else
+                {
+                    temp->next = prev->next;
+                    if (prev->next != nullptr)
+                    {
+                        prev->next->prev = temp;
+                        prev->next = temp;
+                        temp->prev = prev;
+                    }
+                }
+            }
+
+            // Move to the next node to sort
+            current = current->next;
+            if (temp->next == nullptr)
+            {
+                tail = temp;
+            }
+            else
+            {
+                tail = temp->next;
+            }
+        }
+    }
+    else if (pilihan == '2')
+    {
+        while (current != nullptr)
+        {
+            Node *temp = current;
+            Node *prev = current->prev;
+
+            while (prev != nullptr && temp->stock < prev->stock)
+            {
+                prev = prev->prev;
+            }
+
+            if (prev != current->prev)
+            {
+                temp->prev->next = temp->next;
+                if (temp->next != nullptr)
+                {
+                    temp->next->prev = temp->prev;
+                }
+
+                if (prev == nullptr)
+                {
+                    temp->next = head;
+                    head->prev = temp;
+                    head = temp;
+                    temp->prev = nullptr;
+                }
+                else
+                {
+                    temp->next = prev->next;
+                    if (prev->next != nullptr)
+                    {
+                        prev->next->prev = temp;
+                        prev->next = temp;
+                        temp->prev = prev;
+                    }
+                }
+            }
+
+            // Move to the next node to sort
+            current = current->next;
+            if (temp->next == nullptr)
+            {
+                tail = temp;
+            }
+            else
+            {
+                tail = temp->next;
+            }
+        }
+    }
+}
 int viewStock(char methodUrut)
 {
     system("cls");
@@ -195,17 +298,15 @@ int viewStock(char methodUrut)
         cout << "List kosong." << endl;
         return 0;
     }
-    cout << "                                                                             DAFTAR PRODUK TERKINI                                                                              " << endl;
-    cout << "--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------" << endl;
+    cout << "                                                         DAFTAR PRODUK TERKINI                                                               " << endl;
+    cout << "---------------------------------------------------------------------------------------------------------------------------------------------" << endl;
     cout << setw(20) << setiosflags(ios::left) << "Kode Produk" << setw(3) << setiosflags(ios::left) << "|";
     cout << setw(20) << setiosflags(ios::left) << "Nama Produk" << setw(3) << setiosflags(ios::left) << "|";
     cout << setw(20) << setiosflags(ios::left) << "Kategori Produk" << setw(3) << setiosflags(ios::left) << "|";
     cout << setw(7) << setiosflags(ios::left) << "Stock" << setw(3) << setiosflags(ios::left) << "|";
     cout << setw(15) << setiosflags(ios::left) << "Harga/Stock" << setw(3) << setiosflags(ios::left) << "|";
-    cout << setw(10) << setiosflags(ios::left) << "Input" << setw(3) << setiosflags(ios::left) << "|";
-    cout << setw(10) << setiosflags(ios::left) << "Output" << setw(3) << setiosflags(ios::left) << "|";
     cout << setw(40) << setiosflags(ios::left) << "Tanggal" << endl;
-    cout << "--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------" << endl;
+    cout << "----------------------------------------------------------------------------------------------------------------------------------------------" << endl;
     if (methodUrut == 'A')
     {
         Node *current = head;
@@ -256,10 +357,13 @@ void loadListFromFile(Node **head, Node **tail)
         *newNode = temp;
         newNode->next = nullptr;
         newNode->prev = nullptr;
-        if (*head == nullptr) {
+        if (*head == nullptr)
+        {
             *head = newNode;
             *tail = newNode;
-        } else {
+        }
+        else
+        {
             newNode->prev = *tail;
             (*tail)->next = newNode;
             *tail = newNode;
@@ -414,12 +518,12 @@ int insertProduk()
         {
             cout << "Kode Produk sudah ada" << endl;
             cout << "Masukkan kode produk yang lain!" << endl;
-            cout << "Kode Produk     : " << current->kodeProduk << endl ;
-            cout << "Nama Produk     : " << current->namaProduk << endl ;
-            cout << "Kategori Produk : " << current->kategoriProduk << endl ;
-            cout << "Harga/stock     : " << current->hargaPerStock << endl ;
+            cout << "Kode Produk     : " << current->kodeProduk << endl;
+            cout << "Nama Produk     : " << current->namaProduk << endl;
+            cout << "Kategori Produk : " << current->kategoriProduk << endl;
+            cout << "Harga/stock     : " << current->hargaPerStock << endl;
             cout << "Stock           : " << current->stock << endl;
-            cout << "Diperbarui      : " << current->tanggal << endl ;
+            cout << "Diperbarui      : " << current->tanggal << endl;
             fclose(file);
             return 1;
         }
@@ -469,10 +573,14 @@ int deleteStock()
         if (strcmp(current->kodeProduk, kodeProduk) == 0)
         {
             found = true;
-            if (current == head) head = current->next;
-            if (current == tail) tail = current->prev;
-            if (current->prev) current->prev->next = current->next;
-            if (current->next) current->next->prev = current->prev;
+            if (current == head)
+                head = current->next;
+            if (current == tail)
+                tail = current->prev;
+            if (current->prev)
+                current->prev->next = current->next;
+            if (current->next)
+                current->next->prev = current->prev;
             Node *toDelete = current;
             current = current->next;
             delete toDelete;
