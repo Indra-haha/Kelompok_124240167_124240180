@@ -410,6 +410,21 @@ void resetList()
     cout << "Linked list telah direset!" << endl;
 }
 
+void tampilkanKodeProduk() {
+    cout << "\nDaftar Produk yang Tersedia:\n";
+    cout << "-------------------------------------------\n";
+    cout << left << setw(15) << "Kode Produk" << setw(20) << "Nama Produk" << endl;
+    cout << "-------------------------------------------\n";
+
+    Node* current = head;
+    while (current != nullptr) {
+        cout << left << setw(15) << current->kodeProduk
+             << setw(20) << current->namaProduk << endl;
+        current = current->next;
+    }
+    cout << "-------------------------------------------\n";
+}
+
 int updateStock()
 {
     system("cls");
@@ -419,10 +434,14 @@ int updateStock()
         printf("File dataProduk.dat tidak ditemukan!\n");
         return 1;
     }
+
+    tampilkanKodeProduk();
+
     char kodeProduk[15];
     cout << "Update Stock Barang" << endl;
     cout << "Masukkan kode produk : ";
     cin >> kodeProduk;
+
     Node *current = head;
     while (current != NULL)
     {
@@ -464,7 +483,7 @@ int updateHarga()
         printf("File dataProduk.dat tidak ditemukan!\n");
         return 1;
     }
-
+    tampilkanKodeProduk();
     char kodeProduk[15];
     cout << "Update Harga Barang" << endl;
     cout << "Masukkan kode produk : ";
@@ -561,6 +580,8 @@ int deleteStock()
         cout << "Produk tidak ditemukan!" << endl;
         return 1;
     }
+    tampilkanKodeProduk();
+
     Node *current = head;
     char kodeProduk[15];
     bool found = false;
@@ -595,7 +616,6 @@ int deleteStock()
             current = current->next;
         }
     }
-
     fclose(file);
     fclose(tempFile);
 
