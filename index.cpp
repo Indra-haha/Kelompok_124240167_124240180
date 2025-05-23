@@ -341,6 +341,7 @@ int viewStock(char methodUrut)
     }
     return 0;
 }
+
 void loadListFromFile(Node **head, Node **tail)
 {
     FILE *file = fopen("dataProduk.dat", "rb");
