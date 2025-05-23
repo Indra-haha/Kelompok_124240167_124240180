@@ -389,6 +389,7 @@ void saveListToFile(Node *head)
     }
     fclose(file);
 }
+
 void resetList()
 {
     Node *help = head;
@@ -408,6 +409,7 @@ void resetList()
 
     cout << "Linked list telah direset!" << endl;
 }
+
 int updateStock()
 {
     system("cls");
