@@ -86,7 +86,6 @@ void insertNodeMiddle(char *tanggal, char *kodeProduk, char *namaProduk, char *k
 void insertionSort(char pilihan);
 void loadListFromFile(Node **head, Node **tail);
 void saveListToFile(Node *head);
-void resetList();
 int viewStock(char methodUrut);
 int updateStock();
 int updateHarga();
