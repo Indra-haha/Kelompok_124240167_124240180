@@ -343,7 +343,6 @@ int viewStock(char methodUrut)
     }
     return 0;
 }
-
 void loadListFromFile(Node **head, Node **tail)
 {
     FILE *file = fopen("dataProduk.dat", "rb");
@@ -392,26 +391,6 @@ void saveListToFile(Node *head)
     fclose(file);
 }
 
-void resetList()
-{
-    Node *help = head;
-    Node *temp;
-
-    // Hapus semua node
-    while (help != nullptr)
-    {
-        temp = help;
-        help = help->next;
-        free(temp); // Hapus node
-    }
-
-    // Reset pointer first dan last
-    head = nullptr;
-    tail = nullptr;
-
-    cout << "Linked list telah direset!" << endl;
-}
-
 void tampilkanKodeProduk() {
     cout << "\nDaftar Produk yang Tersedia:\n";
     cout << "-------------------------------------------\n";
@@ -438,7 +417,6 @@ int updateStock()
     }
 
     tampilkanKodeProduk();
-
     char kodeProduk[15];
     cout << "Update Stock Barang" << endl;
     cout << "Masukkan kode produk : ";
@@ -475,6 +453,7 @@ int updateStock()
     fclose(file);
     return 1;
 }
+
 int updateHarga()
 {
     system("cls");
@@ -521,6 +500,7 @@ int updateHarga()
     fclose(file);
     return 1;
 }
+
 int insertProduk()
 {
     system("cls");
@@ -572,6 +552,7 @@ int insertProduk()
     insertNodeBack(newNode->tanggal, newNode->kodeProduk, newNode->namaProduk, newNode->kategoriProduk, newNode->stock, newNode->hargaPerStock);
     return 0;
 }
+
 int deleteStock()
 {
     system("cls");
@@ -618,6 +599,7 @@ int deleteStock()
             current = current->next;
         }
     }
+
     fclose(file);
     fclose(tempFile);
 
